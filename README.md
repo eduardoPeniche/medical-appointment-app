@@ -27,6 +27,30 @@ Laravel has the most extensive and thorough [documentation](https://laravel.com/
 
 If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
+## Project Configuration
+
+This application has been configured with the following customizations:
+
+### Timezone
+- Changed the default timezone in `config/app.php` to `'America/Merida'` to match local requirements.
+
+### Language Support
+- Added Spanish language support using Laravel Lang:
+  - Installed package: `composer require laravel-lang/common`
+  - Added Spanish language: `php artisan lang:add es`
+  - Set `APP_LOCALE=es` in `.env` file for Spanish as default language
+
+### Database Configuration
+- Migrated from SQLite to MySQL database:
+  - Updated `.env` file with MySQL connection settings
+  - Configured database credentials for MySQL server
+
+### File Storage Configuration
+- Enabled profile photo uploads in Jetstream:
+  - Modified `config/jetstream.php` to enable photo uploads feature
+- Configured file storage for public access:
+  - Set `FILESYSTEM_DISK=public` in `.env` to store photos in `public/storage`
+
 ## Laravel Sponsors
 
 We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
