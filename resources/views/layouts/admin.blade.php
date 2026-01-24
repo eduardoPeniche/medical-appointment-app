@@ -13,17 +13,18 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <script src="https://kit.fontawesome.com/64f072fd13.js" crossorigin="anonymous"></script>
 
         <!-- Styles -->
         @livewireStyles
     </head>
-    <body class="font-sans antialiased bg-gray-50">
+    <body class="font-sans antialiased">
 
         @include('layouts.includes.admin.navigation')
 
         @include('layouts.includes.admin.sidebar')
 
-        <div class="p-4 sm:ml-64 mt-14">
+        <div class="p-4 sm:ml-64 mt-14 bg-gray-50">
             {{ $slot }}
         </div>
 
