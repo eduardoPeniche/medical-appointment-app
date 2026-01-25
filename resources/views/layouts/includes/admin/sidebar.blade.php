@@ -4,7 +4,7 @@ $links = [
     [
         'icon' => 'fa-solid fa-gauge',
         'name' => 'Dashboard',
-        'href' => 'route("admin.dashboard")',
+        'href' => route('admin.dashboard'),
         'active' => request()->routeIs('admin.dashboard'),
     ],
     [
@@ -13,7 +13,7 @@ $links = [
     [
         'icon' => 'fa-solid fa-gauge',
         'name' => 'Dashboard',
-        'href' => 'route("admin.dashboard")',
+        'href' => route('admin.dashboard'),
         'active' => false,
     ],
 ];
