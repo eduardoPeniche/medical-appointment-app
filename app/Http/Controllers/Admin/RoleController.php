@@ -98,8 +98,21 @@ class RoleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Role $role)
     {
-        //
+        // borrar el elemento
+        $role->delete();
+
+        // confirmacion de operacion exitosa
+        session()->flash('swal', [
+            'icon' => 'success',
+            'title' => 'Rol eliminado exitosamente',
+            'text' => 'El rol se elimino correctamente',
+        ]);
+
+        // redireccionar a tabla principal
+        return redirect(route('admin.roles.index'))->with('success', 'Rol eliminado exitosamente');
+
+
     }
 }
