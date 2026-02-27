@@ -49,7 +49,7 @@ class RoleController extends Controller
         ]);
 
         // redireccionar a tabla principal
-        return redirect('admin.roles.index')->with('success', 'Rol creado exitosamente');
+        return redirect(route('admin.roles.index'))->with('success', 'Rol creado exitosamente');
     }
 
     /**
@@ -66,15 +66,33 @@ class RoleController extends Controller
     public function edit(Role $role)
     {
         //
-        return view('admin.roles.edit', compact($role));
+        return view('admin.roles.edit', compact('role'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Role $role)
     {
-        //
+        // Validar que se inserte bien y excluya la fila que se edita
+        $request->validate([
+            'name' => 'required|unique:roles,name,',
+        ]);
+
+        // Si pasa, editar el rol
+        $role->update([
+            'name' => $request->name,
+        ]);
+
+        // confirmacion de operacion exitosa
+        session()->flash('swal', [
+            'icon' => 'success',
+            'title' => 'Rol actualizado exitosamente',
+            'text' => 'El rol se actualizo correctamente',
+        ]);
+
+        // redireccionar a tabla principal
+        return redirect(route('admin.roles.index'))->with('success', 'Rol actualizado exitosamente');
     }
 
     /**

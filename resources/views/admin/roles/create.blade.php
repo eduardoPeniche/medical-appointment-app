@@ -25,7 +25,6 @@
                     Guardar
                 </x-wire-button>
             </div>
-
         </form>
     </x-wire-card>
 
