@@ -39,6 +39,8 @@ class RoleController extends Controller
         // si pasa la validación
         Role::create([
             'name' => $request->name,
+            'guard_name'=>'web',
+            'is_system'=>false
         ]);
 
         //Confirmacion de exito
@@ -65,6 +67,15 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
+        // Validacion a nivel DB
+        if ($role->is_system) {
+            session()->flash('swal', [
+                'icon' => 'error',
+                'title' => 'Acción denegada',
+                'text' => 'No puedes editar un rol reservador por el sistema',
+            ]);
+            return redirect(route('admin.roles.index'));
+        }
         //
         return view('admin.roles.edit', compact('role'));
     }
@@ -74,6 +85,16 @@ class RoleController extends Controller
      */
     public function update(Request $request, Role $role)
     {
+        // Validacion a nivel DB
+        if ($role->is_system) {
+            session()->flash('swal', [
+                'icon' => 'error',
+                'title' => 'Acción denegada',
+                'text' => 'No puedes editar un rol reservador por el sistema',
+            ]);
+            return redirect(route('admin.roles.index'));
+        }
+        
         // Validar que se inserte bien y excluya la fila que se edita
         $request->validate([
             'name' => 'required|unique:roles,name,' . $role->id,
@@ -107,15 +128,25 @@ class RoleController extends Controller
         //         'text' => 'No puedes borrar este rol',
         //         ]);
         //     return redirect(route('admin.roles.index'));
+        // }
         
         // }
-        $protectedRoles = ['Administrador', 'Doctor', 'Paciente', 'Recepcionista', 'Super Administrador'];
-        if (in_array($role->name, $protectedRoles)) {
+        // $protectedRoles = ['Administrador', 'Doctor', 'Paciente', 'Recepcionista', 'Super Administrador'];
+        // if (in_array($role->name, $protectedRoles)) {
+        //     session()->flash('swal', [
+        //         'icon' => 'error',
+        //         'title' => 'Error',
+        //         'text' => 'No puedes borrar este rol',
+        //         ]);
+        //     return redirect(route('admin.roles.index'));
+        // }
+        
+        if ($role->is_system) {
             session()->flash('swal', [
                 'icon' => 'error',
-                'title' => 'Error',
-                'text' => 'No puedes borrar este rol',
-                ]);
+                'title' => 'Acción denegada',
+                'text' => 'No puedes eliminar un rol reservador por el sistema',
+            ]);
             return redirect(route('admin.roles.index'));
         }
         
