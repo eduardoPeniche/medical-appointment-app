@@ -76,7 +76,7 @@ class RoleController extends Controller
     {
         // Validar que se inserte bien y excluya la fila que se edita
         $request->validate([
-            'name' => 'required|unique:roles,name,',
+            'name' => 'required|unique:roles,name,' . $role->id,
         ]);
 
         // Si pasa, editar el rol
@@ -100,6 +100,25 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
+        // if ($role->id <= 5){
+        //     session()->flash('swal', [
+        //         'icon' => 'error',
+        //         'title' => 'Error',
+        //         'text' => 'No puedes borrar este rol',
+        //         ]);
+        //     return redirect(route('admin.roles.index'));
+        
+        // }
+        $protectedRoles = ['Administrador', 'Doctor', 'Paciente', 'Recepcionista', 'Super Administrador'];
+        if (in_array($role->name, $protectedRoles)) {
+            session()->flash('swal', [
+                'icon' => 'error',
+                'title' => 'Error',
+                'text' => 'No puedes borrar este rol',
+                ]);
+            return redirect(route('admin.roles.index'));
+        }
+        
         // borrar el elemento
         $role->delete();
 
