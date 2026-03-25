@@ -16,6 +16,12 @@ $links = [
         'href' => route('admin.roles.index'),
         'active' => request()->routeIs('admin.roles.*'),
     ],
+    [
+        'icon' => 'fa-solid fa-users',
+        'name' => 'Usuarios',
+        'href' => route('admin.users.index'),
+        'active' => request()->routeIs('admin.users.*'),
+    ],
 ];
 @endphp
 
