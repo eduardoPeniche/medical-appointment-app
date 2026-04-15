@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 
@@ -31,7 +32,28 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+            'id_number' => 'required|string|min:5|max:20|regex:/^[A-Za-z0-9]+$/|unique:users',
+            'phone' => 'required|digits_between:7,15',
+            'address' => 'required|string|max:255',
+            'role_id' => 'required|exists:roles,id',
+        ]);
+
+        $user = User::create($data);
+
+        $user->roles()->attach($data['role_id']);
+
+        session()->flash('swal', [
+            'icon' => 'success',
+            'title' => 'Usuario creado correctamente.',
+            'text' => 'El usuario ha sido creado correctamente',
+        ]);
+
+        return redirect(route('admin.users.index'))->with('sucess', 'User created sucessfully');
+
     }
 
     /**
@@ -47,7 +69,9 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return view('admin.users.edit', compact('user'));
+        $roles = Role::all();
+
+        return view('admin.users.edit', compact('user', 'roles'));
     }
 
     /**
@@ -55,7 +79,38 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed',
+            'id_number' => 'required|string|min:5|max:20|regex:/^[A-Za-z0-9]+$/|unique:users,id_number,' . $user->id,
+            'phone' => 'required|digits_between:7,15',
+            'address' => 'required|string|max:255',
+            'role_id' => 'required|exists:roles,id',
+        ]);
+
+        $user->update([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'id_number' => $data['id_number'],
+            'phone' => $data['phone'],
+            'address' => $data['address'],
+        ]);
+
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->password);
+            $user->save();
+        }
+
+        $user->roles()->sync($request->role_id);
+
+        session()->flash('swal', [
+            'icon' => 'success',
+            'title' => 'Usuario actualizado correctamente.',
+            'text' => 'El usuario ha sido actualizado correctamente',
+        ]);
+
+        return redirect(route('admin.users.index'))->with('sucess', 'User created sucessfully');
     }
 
     /**
@@ -63,6 +118,21 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+
+        if (Auth::id() === $user->id) {
+            abort(403, 'No puedes eliminar tu propio usuario.');
+        }
         //
+        $user->roles()->detach();
+
+        $user->delete();
+
+        session()->flash('swal', [
+            'icon' => 'success',
+            'title' => 'Usuario eliminado correctamente.',
+            'text' => 'El usuario ha sido eliminado correctamente',
+        ]);
+
+        return redirect(route('admin.users.index'))->with('sucess', 'User deleted sucessfully');
     }
 }
